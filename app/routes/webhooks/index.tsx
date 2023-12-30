@@ -2,7 +2,7 @@ import type {ActionFunctionArgs} from "@remix-run/node";
 import {v4 as uuidv4} from "uuid";
 import {authenticate} from "../../shopify.server";
 import db from "../../db.server";
-import {handleProductWebhook} from "~/routes/webhooks/handleProductWebhook";
+import {handleProductCreateWebhook, handleProductUpdateWebhook,handleProductDeleteWebhook} from "~/routes/webhooks/handleProductWebhook";
 import logger from "../../../logger";
 
 export const action = async ({request}: ActionFunctionArgs) => {
@@ -25,10 +25,13 @@ export const action = async ({request}: ActionFunctionArgs) => {
 
       break;
     case "PRODUCTS_CREATE":
+      handleProductCreateWebhook({webhookRequestId, topic, shop, admin, payload});
+      break
     case "PRODUCTS_UPDATE":
+      handleProductUpdateWebhook({webhookRequestId, topic, shop, admin, payload});
+      break
     case "PRODUCTS_DELETE":
-      console.log("PRODUCTS_CREATE");
-      handleProductWebhook({webhookRequestId, topic, shop, admin, payload});
+      handleProductDeleteWebhook({webhookRequestId, topic, shop, admin, payload});
       break
     case "CUSTOMERS_DATA_REQUEST":
     case "CUSTOMERS_REDACT":

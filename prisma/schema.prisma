@@ -20,3 +20,20 @@ model Session {
   accessToken String
   userId      BigInt?
 }
+
+model Product {
+  admin_graphql_api_id String
+  body_html            String?
+  created_at           DateTime?
+  handle               String?
+  id                   BigInt    @id
+  product_type         String?
+  published_at         DateTime?
+  template_suffix      String?
+  title                String?
+  updated_at           DateTime?
+  vendor               String?
+  status               String?
+  published_scope      String?
+  tags                 String?
+}
