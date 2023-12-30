@@ -1,12 +1,16 @@
 import type {ActionFunctionArgs} from "@remix-run/node";
+import {v4 as uuidv4} from "uuid";
 import {authenticate} from "../../shopify.server";
 import db from "../../db.server";
 import {handleProductWebhook} from "~/routes/webhooks/handleProductWebhook";
+import logger from "../../../logger";
 
 export const action = async ({request}: ActionFunctionArgs) => {
   const {topic, shop, session, admin, payload} = await authenticate.webhook(
     request
   );
+  const webhookRequestId = uuidv4();
+  logger.debug({webhookRequestId, topic})
 
   if (!admin) {
     // The admin context isn't returned if the webhook fired after a shop was uninstalled.
@@ -24,7 +28,7 @@ export const action = async ({request}: ActionFunctionArgs) => {
     case "PRODUCTS_UPDATE":
     case "PRODUCTS_DELETE":
       console.log("PRODUCTS_CREATE");
-      handleProductWebhook({topic, shop, admin, payload});
+      handleProductWebhook({webhookRequestId, topic, shop, admin, payload});
       break
     case "CUSTOMERS_DATA_REQUEST":
     case "CUSTOMERS_REDACT":

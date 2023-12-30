@@ -1,10 +1,13 @@
-export function handleProductWebhook({topic, shop, admin, payload}: {
+import logger from "../../../logger";
+
+export function handleProductWebhook({webhookRequestId, topic, shop, admin, payload}: {
+  webhookRequestId: String;
   topic: String;
   shop: String;
   admin: any;
   payload: any;
 }) {
-  console.log("Inside handleProductWebhook")
+  logger.info({webhookRequestId, msg:"Inside handleProductWebhook"})
   const {image, images, options, variants, ...product} = payload;
-  console.log({image, images, options, variants, product})
+  logger.info({webhookRequestId, topic, shop})
 }
