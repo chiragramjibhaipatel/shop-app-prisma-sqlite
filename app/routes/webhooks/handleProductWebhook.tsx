@@ -9,7 +9,7 @@ export function handleProductCreateWebhook({webhookRequestId, topic, shop, admin
   admin: any;
   payload: any;
 }) {
-  logger.info({webhookRequestId, msg:"Inside handleProductCreateWebhook"});
+  logger.info({webhookRequestId, msg: "Inside handleProductCreateWebhook"});
   handleProductWebhook({webhookRequestId, topic, shop, admin, payload});
 }
 
@@ -45,7 +45,18 @@ async function handleProductWebhook({webhookRequestId, topic, shop, admin, paylo
   payload: any;
 }) {
   const {image, images, options, variants, ...product} = payload;
-  logger.debug({webhookRequestId, product, msg:"handleProductWebhook"})
-  await db.product.upsert({where:{id: product.id}, create: product, update: product})
-  logger.info({webhookRequestId, topic, shop, status: "success", msg:"handleProductWebhook"})
+  // logger.info({webhookRequestId, product, images, options, variants,  msg: "handleProductWebhook"})
+
+  const productCreated = await db.product.upsert({where: {id: product.id}, create: product, update: {...product}});
+
+  for (const variant of variants) {
+    await db.variant.upsert({where: {id: variant.id}, create: variant, update: variant});
+  }
+
+  for (const image of images) {
+    await db.image.upsert({where: {id: image.id}, create: {...image, variant_ids: image.variant_ids.join()}, update: {...image, variant_ids: image.variant_ids.join()}});
+  }
+
+  logger.info({webhookRequestId, topic, shop, status: "success", msg: "handleProductWebhook"})
 }
+ 

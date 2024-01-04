@@ -22,11 +22,11 @@ model Session {
 }
 
 model Product {
+  id                   BigInt    @id
   admin_graphql_api_id String
   body_html            String?
   created_at           DateTime?
   handle               String?
-  id                   BigInt    @id
   product_type         String?
   published_at         DateTime?
   template_suffix      String?
@@ -36,4 +36,53 @@ model Product {
   status               String?
   published_scope      String?
   tags                 String?
+  variants             Variant[]
+  Image                Image[]
+}
+
+model Variant {
+  id                     BigInt    @id
+  barcode                String?
+  product                Product?  @relation(fields: [product_id], references: [id])
+  product_id             BigInt?
+  title                  String?
+  price                  String?
+  sku                    String?
+  position               Int?
+  inventory_policy       String?
+  compare_at_price       String?
+  fulfillment_service    String?
+  inventory_management   String?
+  option1                String?
+  option2                String?
+  option3                String?
+  created_at             DateTime?
+  updated_at             DateTime?
+  taxable                Boolean?
+  grams                  Int?
+  image_id               BigInt?
+  weight                 Int?
+  weight_unit            String?
+  inventory_item_id      BigInt?
+  inventory_quantity     Int?
+  old_inventory_quantity Int?
+  requires_shipping      Boolean?
+  admin_graphql_api_id   String?
+  image                  Image?    @relation(fields: [image_id], references: [id])
+}
+
+model Image {
+  id                   BigInt    @id
+  alt                  String?
+  position             Int?
+  product              Product   @relation(fields: [product_id], references: [id])
+  product_id           BigInt
+  created_at           DateTime?
+  updated_at           DateTime?
+  admin_graphql_api_id String?
+  width                Int?
+  height               Int?
+  src                  String?
+  variant_ids          String?
+  Variant              Variant[]
 }
